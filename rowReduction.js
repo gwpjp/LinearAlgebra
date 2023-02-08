@@ -11,19 +11,28 @@ async function rowReduce() {
 
   const len = linesArray.length;
 
-  if(len > 0) {
-    let index = 0
-    let currentRow = linesArray[index];
-    while(currentRow[0] == 0){
+  let index = 0;
+
+  for(let col = 0; col < len; col++){
+    if(linesArray[index][col] == 0){
+      console.log(linesArray)
+    } else {
+      linesArray[index] = linesArray[index].map((entry) => entry/linesArray[index][col]);
+      console.log("1", linesArray)
+      for (let row = 0; row < len; row++){
+        if (row != index){
+          linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[index][i] * linesArray[row][col])
+        }
+        console.log("rows",linesArray)
+      }
       index++;
-      currentRow = linesArray[index]
     }
-    linesArray[index] = linesArray[index].map((col) => col/linesArray[index][0])
   }
 
   console.log(linesArray)
   
 }
+
 
 
 async function processLineByLine(filename) {
