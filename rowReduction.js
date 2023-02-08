@@ -14,19 +14,35 @@ async function rowReduce() {
   let index = 0;
 
   for(let col = 0; col < len; col++){
+    // Check if this is an acceptable pivot by not being 0
     if(linesArray[index][col] == 0){
-      console.log(linesArray)
-    } else {
-      linesArray[index] = linesArray[index].map((entry) => entry/linesArray[index][col]);
-      console.log("1", linesArray)
-      for (let row = 0; row < len; row++){
-        if (row != index){
-          linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[index][i] * linesArray[row][col])
+      let row = index + 1;
+      while(row < len){
+        if(linesArray[row][col] == 0) {
+          row++
+        } else {
+          break
         }
-        console.log("rows",linesArray)
       }
-      index++;
+      if (row == len){
+        console.log("Not a viable system");
+        return;
+      }
+      const tempLine = linesArray[index];
+      linesArray[index] = linesArray[row];
+      linesArray[row] = tempLine;
+    } 
+    linesArray[index] = linesArray[index].map((entry) => entry/linesArray[index][col]);
+    console.log("1", linesArray)
+    for (let row = 0; row < len; row++){
+      // Add multiple of one row to another as long as it's not the fixed row
+      if (row != index){
+        linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[index][i] * linesArray[row][col])
+      }
+      console.log("rows",linesArray)
     }
+    index++;
+    
   }
 
   console.log(linesArray)
