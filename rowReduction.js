@@ -10,10 +10,12 @@ async function rowReduce() {
   }
 
   const len = linesArray.length;
+  const numColumns = linesArray[0].length - 1;
 
   let index = 0;
 
-  for(let col = 0; col < len; col++){
+  for(let col = 0; col < numColumns; col++){
+    console.log(col);
     // Check if this is an acceptable pivot by not being 0
     if(linesArray[index][col] == 0){
       let row = index + 1;
@@ -24,14 +26,15 @@ async function rowReduce() {
           break
         }
       }
+      // If there are no non-zero rows then go to the next column
       if (row == len){
-        console.log("Not a viable system");
-        return;
+        continue;
       }
       const tempLine = linesArray[index];
       linesArray[index] = linesArray[row];
       linesArray[row] = tempLine;
     } 
+    console.log("swap done", linesArray);
     linesArray[index] = linesArray[index].map((entry) => entry/linesArray[index][col]);
     console.log("1", linesArray)
     for (let row = 0; row < len; row++){
