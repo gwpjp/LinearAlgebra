@@ -4,51 +4,61 @@ import readline from "readline";
 
 
 async function rowReduce() {
+  // First load the array
   const linesArray = await processLineByLine('sampledata.csv');
   if(!linesArray){
     return;
   }
 
-  const len = linesArray.length;
+  // Find the number of rows and columns of the non-augmented matrix
+  const numRows = linesArray.length;
   const numColumns = linesArray[0].length - 1;
 
-  let index = 0;
+  // This will be the row of the current pivot
+  let pivotRow = 0;
 
+  // Go through each column of the non-augmented matrix
   for(let col = 0; col < numColumns; col++){
     console.log(col);
     // Check if this is an acceptable pivot by not being 0
-    if(linesArray[index][col] == 0){
-      let row = index + 1;
-      while(row < len){
+    if(linesArray[pivotRow][col] == 0){
+      let row = pivotRow + 1;
+      // Search through the rows for a pivot
+      while(row < numRows){
         if(linesArray[row][col] == 0) {
           row++
         } else {
           break
         }
       }
-      // If there are no non-zero rows then go to the next column
-      if (row == len){
+      // If there is not a pivot in this column then go to the next column
+      if (row == numRows){
         continue;
       }
-      const tempLine = linesArray[index];
-      linesArray[index] = linesArray[row];
+      // Otherwise, there is a pivot so we need to swap
+      const tempLine = linesArray[pivotRow];
+      linesArray[pivotRow] = linesArray[row];
       linesArray[row] = tempLine;
     } 
-    console.log("swap done", linesArray);
-    linesArray[index] = linesArray[index].map((entry) => entry/linesArray[index][col]);
-    console.log("1", linesArray)
-    for (let row = 0; row < len; row++){
+    console.log("post swap", linesArray);
+    // Now make the pivot equal to 1
+    linesArray[pivotRow] = linesArray[pivotRow].map((entry) => entry/linesArray[pivotRow][col]);
+    console.log("pivot is 1", linesArray)
+    // Go through the rest of the column and make the values 0 by adding rows together
+    for (let row = 0; row <numRows; row++){
       // Add multiple of one row to another as long as it's not the fixed row
-      if (row != index){
-        linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[index][i] * linesArray[row][col])
+      if (row != pivotRow){
+        linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[pivotRow][i] * linesArray[row][col])
       }
       console.log("rows",linesArray)
     }
-    index++;
+    pivotRow++;
     
   }
 
-  console.log(linesArray)
+  console.log("Row reduced echelon form", linesArray)
+  
+  
   
 }
 
@@ -69,8 +79,8 @@ async function processLineByLine(filename) {
      linesArray.push(line.split(','));
     }
 
-    linesArray.forEach((row, index) => {
-      linesArray[index] = row.map((col) => parseFloat(col))
+    linesArray.forEach((row, pivotRow) => {
+      linesArray[pivotRow] = row.map((col) => parseFloat(col))
     })
 
     return linesArray
