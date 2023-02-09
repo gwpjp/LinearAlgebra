@@ -1,14 +1,14 @@
 import fs from "fs";
 import readline from "readline";
 
-
-
 async function rowReduce() {
   // First load the array
   const linesArray = await processLineByLine('sampledata.csv');
   if(!linesArray){
     return;
   }
+
+  console.log("Initial augmented matrix", linesArray)
 
   // Find the number of rows and columns of the non-augmented matrix
   const numRows = linesArray.length;
@@ -19,7 +19,7 @@ async function rowReduce() {
 
   // Go through each column of the non-augmented matrix
   for(let col = 0; col < numColumns; col++){
-    console.log(col);
+    console.log(`Processing column ${col}.`);
     // Check if this is an acceptable pivot by not being 0
     if(linesArray[pivotRow][col] == 0){
       let row = pivotRow + 1;
@@ -39,8 +39,8 @@ async function rowReduce() {
       const tempLine = linesArray[pivotRow];
       linesArray[pivotRow] = linesArray[row];
       linesArray[row] = tempLine;
+      console.log(`Swapped row ${pivotRow} and row ${row}`, linesArray);
     } 
-    console.log("post swap", linesArray);
     // Now make the pivot equal to 1
     linesArray[pivotRow] = linesArray[pivotRow].map((entry) => entry/linesArray[pivotRow][col]);
     console.log("pivot is 1", linesArray)
@@ -49,8 +49,9 @@ async function rowReduce() {
       // Add multiple of one row to another as long as it's not the fixed row
       if (row != pivotRow){
         linesArray[row] = linesArray[row].map((entry, i) => linesArray[row][i] - linesArray[pivotRow][i] * linesArray[row][col])
+      console.log(`row ${pivotRow} added to row ${row}`,linesArray)
+
       }
-      console.log("rows",linesArray)
     }
     pivotRow++;
     
@@ -61,7 +62,6 @@ async function rowReduce() {
   
   
 }
-
 
 
 async function processLineByLine(filename) {
